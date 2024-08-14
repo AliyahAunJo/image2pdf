@@ -174,11 +174,38 @@
       let currentSection = null;
 
 function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active-section');
-            });
-            document.getElementById(sectionId).classList.add('active-section');
-        }
+    // Clear all inputs and previews
+    clearAll();
+    
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active-section');
+    });
+    
+    // Show the selected section
+    document.getElementById(sectionId).classList.add('active-section');
+    
+    // Reset file inputs
+    document.getElementById('imageInput').value = '';
+    document.getElementById('pdfInput').value = '';
+    document.getElementById('splitPDFInput').value = '';
+    
+    // Clear preview containers
+    document.getElementById('previewContainer').innerHTML = '';
+    document.getElementById('splitPDFPreview').innerHTML = '';
+    
+    // Reset orientation select to default (if exists)
+    const orientationSelect = document.getElementById('orientationSelect');
+    if (orientationSelect) {
+        orientationSelect.value = 'portrait';
+    }
+    
+    // Reset output format select to default (if exists)
+    const outputFormatSelect = document.getElementById('outputFormatSelect');
+    if (outputFormatSelect) {
+        outputFormatSelect.value = 'png';
+    }
+}
 
 
 function clearAll() {
@@ -188,9 +215,6 @@ function clearAll() {
     document.getElementById('pdfContainer').innerHTML = '';
     document.getElementById('previewContainer').innerHTML = '';
     document.getElementById('splitPDFPreview').innerHTML = '';
-    document.getElementById('imageInput').value = '';
-    document.getElementById('pdfInput').value = '';
-    document.getElementById('splitPDFInput').value = '';
 }
 
 
