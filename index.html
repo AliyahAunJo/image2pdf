@@ -1,50 +1,79 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KruAun Jaidee PDF Creator</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <style>
-        #imageContainer img, #pdfContainer img { max-width: 200px; margin: 10px; }
-        #previewContainer { 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            background-color: #f8f9fa; 
+        body {
+            background-color: #f0f8ff;
+        }
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #007bff;
+        }
+        .btn-menu {
+            margin-bottom: 10px;
+        }
+        #imageContainer img,
+        #pdfContainer img {
+            max-width: 150px;
+            margin: 5px;
+        }
+        #previewContainer {
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 0.25rem;
             padding: 15px;
+            margin-top: 20px;
         }
-        .preview-page { 
-            display: inline-block; 
-            margin-right: 15px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .preview-page {
+            display: inline-block;
+            margin-right: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
         .preview-page:hover {
             transform: scale(1.05);
         }
-        .preview-container-portrait { height: 80vh; overflow-y: auto; }
-        .preview-container-landscape { width: 100%; overflow-x: auto; }
+        .section {
+            display: none;
+            margin-top: 20px;
+        }
+        .active-section {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">❤️ KruAun Jaidee ❤️<br>📮 We Love PDF</h1>
+        <h1 class="mb-4 text-center">❤️ KruAun Jaidee ❤️<br />📮 We Love PDF</h1>
+        
         <div class="row mb-3">
-            <div class="col">
-                <button onclick="showImageSection()" class="btn btn-primary">รวมรูปภาพ</button>
-                <button onclick="showPDFSection()" class="btn btn-secondary">รวม PDF</button>
+            <div class="col-12 text-center">
+                <button onclick="showSection('imageSection')" class="btn btn-primary btn-menu">รวมรูปภาพ</button>
+                <button onclick="showSection('pdfSection')" class="btn btn-success btn-menu">รวม PDF</button>
+                <button onclick="showSection('splitPDFSection')" class="btn btn-info btn-menu">แยก PDF เป็นภาพ</button>
             </div>
         </div>
-        <div id="imageSection" style="display: none;">
+
+        <div id="imageSection" class="section">
+            <h3 class="mb-3">รวมรูปภาพ</h3>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="mb-3">
+                    <div class="mb-3 mt-3">
                         <label for="imageInput" class="form-label">เลือกรูปภาพ</label>
-                        <input type="file" class="form-control" id="imageInput" accept="image/*" multiple>
+                        <input type="file" class="form-control" id="imageInput" accept="image/*" multiple />
                     </div>
                     <div class="mb-3">
                         <label for="orientationSelect" class="form-label">เลือกแนวหน้ากระดาษ</label>
@@ -56,203 +85,357 @@
                     <button onclick="previewPDF()" class="btn btn-secondary">แสดงตัวอย่าง</button>
                     <button onclick="generateAndDownloadPDF()" class="btn btn-primary">สร้างและดาวน์โหลด PDF</button>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mt-3">
                     <h4>รูปภาพที่เลือก</h4>
                     <div id="imageContainer" class="border p-2 rounded mb-2"></div>
                 </div>
             </div>
         </div>
-        <div id="pdfSection" style="display: none;">
+
+        <div id="pdfSection" class="section">
+            <h3 class="mb-3">รวม PDF</h3>
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="pdfInput" class="form-label">เลือกไฟล์ PDF</label>
-                        <input type="file" class="form-control" id="pdfInput" accept=".pdf" multiple>
+                        <input type="file" class="form-control" id="pdfInput" accept=".pdf" multiple />
                     </div>
                     <button onclick="previewPDF()" class="btn btn-secondary">แสดงตัวอย่าง</button>
                     <button onclick="generateAndDownloadPDF()" class="btn btn-primary">สร้างและดาวน์โหลด PDF</button>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mt-3">
                     <h4>ไฟล์ PDF ที่เลือก</h4>
                     <div id="pdfContainer" class="border p-2 rounded"></div>
                 </div>
             </div>
         </div>
-        <div class="mt-4">
-            <h4>ตัวอย่าง PDF</h4>
-            <div id="previewContainer"></div>
+
+        <div id="splitPDFSection" class="section">
+            <h3 class="mb-3">แยก PDF เป็นภาพ</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="splitPDFInput" class="form-label">เลือกไฟล์ PDF ที่ต้องการแยก</label>
+                        <input type="file" class="form-control" id="splitPDFInput" accept=".pdf" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="outputFormatSelect" class="form-label">เลือกรูปแบบไฟล์ที่ต้องการ</label>
+                        <select id="outputFormatSelect" class="form-select">
+                            <option value="png">PNG</option>
+                            <option value="jpg">JPG</option>
+                        </select>
+                    </div>
+                    <button onclick="previewSplitImages()" class="btn btn-secondary">แสดงตัวอย่างภาพ</button>
+                    <button onclick="splitPDFToImages()" class="btn btn-primary">แยก PDF เป็นภาพ</button>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <h4>ตัวอย่างหน้า PDF</h4>
+                    <div id="splitPDFPreview" class="border p-2 rounded"></div>
+                </div>
+            </div>
         </div>
+
+        <div id="previewContainer" class="mt-4"></div>
     </div>
 
     <script>
-        let selectedImages = [];
-        let selectedPDFs = [];
+      let selectedImages = [];
+      let selectedPDFs = [];
+      
+      function showMainMenu() {
+    const sections = ['imageSection', 'pdfSection', 'splitPDFSection'];
+    sections.forEach(section => {
+        document.getElementById(section).style.display = 'none';
+    });
+    document.getElementById('mainMenu').style.display = 'block';
+    currentSection = null;
+    clearAll();
+}
 
-        document.getElementById('imageInput').addEventListener('change', handleImageInput);
-        document.getElementById('pdfInput').addEventListener('change', handlePDFInput);
+      document
+        .getElementById("imageInput")
+        .addEventListener("change", handleImageInput);
+      document
+        .getElementById("pdfInput")
+        .addEventListener("change", handlePDFInput);
 
-        function showImageSection() {
-            document.getElementById('imageSection').style.display = 'block';
-            document.getElementById('pdfSection').style.display = 'none';
-            clearAll();
-        }
+      function showImageSection() {
+        document.getElementById("imageSection").style.display = "block";
+        document.getElementById("pdfSection").style.display = "none";
+        clearAll();
+      }
 
-        function showPDFSection() {
-            document.getElementById('imageSection').style.display = 'none';
-            document.getElementById('pdfSection').style.display = 'block';
-            clearAll();
-        }
+      function showPDFSection() {
+        document.getElementById("imageSection").style.display = "none";
+        document.getElementById("pdfSection").style.display = "block";
+        clearAll();
+      }
 
-        function clearAll() {
-            selectedImages = [];
-            selectedPDFs = [];
-            document.getElementById('imageContainer').innerHTML = '';
-            document.getElementById('pdfContainer').innerHTML = '';
-            document.getElementById('previewContainer').innerHTML = '';
-            document.getElementById('imageInput').value = '';
-            document.getElementById('pdfInput').value = '';
-        }
+      let currentSection = null;
 
-        function handleImageInput(e) {
-            const files = e.target.files;
-            const container = document.getElementById('imageContainer');
-            container.innerHTML = '';
-            selectedImages = [];
-
-            for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.classList.add('img-thumbnail');
-                    container.appendChild(img);
-                    selectedImages.push({data: event.target.result, type: file.type});
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function handlePDFInput(e) {
-            const files = e.target.files;
-            const container = document.getElementById('pdfContainer');
-            container.innerHTML = '';
-            selectedPDFs = [];
-
-            for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    selectedPDFs.push(event.target.result);
-                    const pdfIcon = document.createElement('img');
-                    pdfIcon.src = 'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg';
-                    pdfIcon.alt = file.name;
-                    pdfIcon.title = file.name;
-                    pdfIcon.classList.add('img-thumbnail');
-                    container.appendChild(pdfIcon);
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        async function generatePDF() {
-            const PDFLib = window.PDFLib;
-            const pdfDoc = await PDFLib.PDFDocument.create();
-            const orientation = document.getElementById('orientationSelect').value;
-            
-            if (selectedImages.length > 0) {
-                for (let imgData of selectedImages) {
-                    let img;
-                    if (imgData.type.startsWith('image/png')) {
-                        img = await pdfDoc.embedPng(imgData.data);
-                    } else if (imgData.type.startsWith('image/jpeg') || imgData.type.startsWith('image/jpg')) {
-                        img = await pdfDoc.embedJpg(imgData.data);
-                    } else {
-                        // For other image types, convert to PNG
-                        const tempImg = document.createElement('img');
-                        tempImg.src = imgData.data;
-                        await new Promise(resolve => tempImg.onload = resolve);
-                        const canvas = document.createElement('canvas');
-                        canvas.width = tempImg.width;
-                        canvas.height = tempImg.height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(tempImg, 0, 0);
-                        const pngData = canvas.toDataURL('image/png').split(',')[1];
-                        img = await pdfDoc.embedPng(pngData);
-                    }
-                    const page = pdfDoc.addPage(orientation === 'portrait' ? PDFLib.PageSizes.A4 : PDFLib.PageSizes.A4.reverse());
-                    const { width, height } = page.getSize();
-                    const scaleFactor = Math.min(width / img.width, height / img.height) * 0.9;
-                    page.drawImage(img, {
-                        x: (width - img.width * scaleFactor) / 2,
-                        y: (height - img.height * scaleFactor) / 2,
-                        width: img.width * scaleFactor,
-                        height: img.height * scaleFactor,
-                    });
-                }
-            } else if (selectedPDFs.length > 0) {
-                for (let pdfSrc of selectedPDFs) {
-                    const srcDoc = await PDFLib.PDFDocument.load(pdfSrc);
-                    const copiedPages = await pdfDoc.copyPages(srcDoc, srcDoc.getPageIndices());
-                    copiedPages.forEach((page) => pdfDoc.addPage(page));
-                }
-            }
-
-            return pdfDoc;
-        }
-
-        async function previewPDF() {
-            const pdfDoc = await generatePDF();
-            const pdfBytes = await pdfDoc.save();
-            const pdfDataUri = await blobToDataURL(new Blob([pdfBytes], { type: 'application/pdf' }));
-            
-            const loadingTask = pdfjsLib.getDocument(pdfDataUri);
-            const pdf = await loadingTask.promise;
-            
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = '';
-
-            const orientation = document.getElementById('orientationSelect').value;
-            previewContainer.className = orientation === 'portrait' ? 'preview-container-portrait' : 'preview-container-landscape';
-
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                const page = await pdf.getPage(pageNum);
-                const scale = orientation === 'portrait' ? 0.8 : 0.5;
-                const viewport = page.getViewport({ scale });
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-
-                await page.render(renderContext);
-
-                canvas.classList.add('preview-page');
-                previewContainer.appendChild(canvas);
-            }
-        }
-
-        async function generateAndDownloadPDF() {
-            const pdfDoc = await generatePDF();
-            const pdfBytes = await pdfDoc.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'รวมไฟล์.pdf';
-            link.click();
-        }
-
-        function blobToDataURL(blob) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
+function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active-section');
             });
+            document.getElementById(sectionId).classList.add('active-section');
         }
+
+
+function clearAll() {
+    selectedImages = [];
+    selectedPDFs = [];
+    document.getElementById('imageContainer').innerHTML = '';
+    document.getElementById('pdfContainer').innerHTML = '';
+    document.getElementById('previewContainer').innerHTML = '';
+    document.getElementById('splitPDFPreview').innerHTML = '';
+    document.getElementById('imageInput').value = '';
+    document.getElementById('pdfInput').value = '';
+    document.getElementById('splitPDFInput').value = '';
+}
+
+
+      function handleImageInput(e) {
+        const files = e.target.files;
+        const container = document.getElementById("imageContainer");
+        container.innerHTML = "";
+        selectedImages = [];
+
+        for (let file of files) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const img = document.createElement("img");
+            img.src = event.target.result;
+            img.classList.add("img-thumbnail");
+            container.appendChild(img);
+            selectedImages.push({ data: event.target.result, type: file.type });
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function handlePDFInput(e) {
+        const files = e.target.files;
+        const container = document.getElementById("pdfContainer");
+        container.innerHTML = "";
+        selectedPDFs = [];
+
+        for (let file of files) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            selectedPDFs.push(event.target.result);
+            const pdfIcon = document.createElement("img");
+            pdfIcon.src =
+              "https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg";
+            pdfIcon.alt = file.name;
+            pdfIcon.title = file.name;
+            pdfIcon.classList.add("img-thumbnail");
+            container.appendChild(pdfIcon);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      async function generatePDF() {
+        const PDFLib = window.PDFLib;
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        const orientation = document.getElementById("orientationSelect").value;
+
+        if (selectedImages.length > 0) {
+          for (let imgData of selectedImages) {
+            let img;
+            if (imgData.type.startsWith("image/png")) {
+              img = await pdfDoc.embedPng(imgData.data);
+            } else if (
+              imgData.type.startsWith("image/jpeg") ||
+              imgData.type.startsWith("image/jpg")
+            ) {
+              img = await pdfDoc.embedJpg(imgData.data);
+            } else {
+              // For other image types, convert to PNG
+              const tempImg = document.createElement("img");
+              tempImg.src = imgData.data;
+              await new Promise((resolve) => (tempImg.onload = resolve));
+              const canvas = document.createElement("canvas");
+              canvas.width = tempImg.width;
+              canvas.height = tempImg.height;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(tempImg, 0, 0);
+              const pngData = canvas.toDataURL("image/png").split(",")[1];
+              img = await pdfDoc.embedPng(pngData);
+            }
+            const page = pdfDoc.addPage(
+              orientation === "portrait"
+                ? PDFLib.PageSizes.A4
+                : PDFLib.PageSizes.A4.reverse()
+            );
+            const { width, height } = page.getSize();
+            const scaleFactor =
+              Math.min(width / img.width, height / img.height) * 0.9;
+            page.drawImage(img, {
+              x: (width - img.width * scaleFactor) / 2,
+              y: (height - img.height * scaleFactor) / 2,
+              width: img.width * scaleFactor,
+              height: img.height * scaleFactor,
+            });
+          }
+        } else if (selectedPDFs.length > 0) {
+          for (let pdfSrc of selectedPDFs) {
+            const srcDoc = await PDFLib.PDFDocument.load(pdfSrc);
+            const copiedPages = await pdfDoc.copyPages(
+              srcDoc,
+              srcDoc.getPageIndices()
+            );
+            copiedPages.forEach((page) => pdfDoc.addPage(page));
+          }
+        }
+
+        return pdfDoc;
+      }
+
+      async function previewPDF() {
+        const pdfDoc = await generatePDF();
+        const pdfBytes = await pdfDoc.save();
+        const pdfDataUri = await blobToDataURL(
+          new Blob([pdfBytes], { type: "application/pdf" })
+        );
+
+        const loadingTask = pdfjsLib.getDocument(pdfDataUri);
+        const pdf = await loadingTask.promise;
+
+        const previewContainer = document.getElementById("previewContainer");
+        previewContainer.innerHTML = "";
+
+        const orientation = document.getElementById("orientationSelect").value;
+        previewContainer.className =
+          orientation === "portrait"
+            ? "preview-container-portrait"
+            : "preview-container-landscape";
+
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const scale = orientation === "portrait" ? 0.8 : 0.5;
+          const viewport = page.getViewport({ scale });
+
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport,
+          };
+
+          await page.render(renderContext);
+
+          canvas.classList.add("preview-page");
+          previewContainer.appendChild(canvas);
+        }
+      }
+      
+      async function previewSplitImages() {
+    const pdfFile = document.getElementById('splitPDFInput').files[0];
+    if (!pdfFile) {
+        alert('กรุณาเลือกไฟล์ PDF');
+        return;
+    }
+
+    const outputFormat = document.getElementById('outputFormatSelect').value;
+    const pdfData = await pdfFile.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: pdfData}).promise;
+    const previewContainer = document.getElementById('splitPDFPreview');
+    previewContainer.innerHTML = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const scale = 0.5;
+        const viewport = page.getViewport({scale});
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({canvasContext: context, viewport: viewport}).promise;
+
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL(`image/${outputFormat}`);
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        img.style.marginBottom = '10px';
+        img.title = `หน้าที่ ${i}`;
+
+        previewContainer.appendChild(img);
+    }
+}
+
+      async function generateAndDownloadPDF() {
+        const pdfDoc = await generatePDF();
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: "application/pdf" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "รวมไฟล์.pdf";
+        link.click();
+      }
+
+      function blobToDataURL(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      async function showSplitPDFSection() {
+        document.getElementById("imageSection").style.display = "none";
+        document.getElementById("pdfSection").style.display = "none";
+        document.getElementById("splitPDFSection").style.display = "block";
+        clearAll();
+      }
+
+      async function splitPDFToImages() {
+        const pdfFile = document.getElementById("splitPDFInput").files[0];
+        if (!pdfFile) {
+          alert("กรุณาเลือกไฟล์ PDF");
+          return;
+        }
+
+        const outputFormat =
+          document.getElementById("outputFormatSelect").value;
+        const pdfData = await pdfFile.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+        const images = [];
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 2 });
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          await page.render({ canvasContext: context, viewport: viewport })
+            .promise;
+
+          const imgData = canvas.toDataURL(`image/${outputFormat}`);
+          images.push({
+            name: `page_${i}.${outputFormat}`,
+            data: imgData.split(",")[1],
+          });
+        }
+
+        // Create ZIP file
+        const zip = new JSZip();
+        images.forEach((img) => zip.file(img.name, img.data, { base64: true }));
+        const zipContent = await zip.generateAsync({ type: "blob" });
+
+        // Download ZIP file
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(zipContent);
+        link.download = `pdf_images.zip`;
+        link.click();
+      }
     </script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  </body>
 </html>
